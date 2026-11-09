@@ -72,14 +72,16 @@ def make_http(args: argparse.Namespace) -> HTTP:
 
 def _warm(http: HTTP, product: str) -> None:
     """Complete the publisher's redirect handshake before a facet search."""
-    if getattr(http, "_opil_warmed", False):
+    warmed = getattr(http, "_opil_warmed", set())
+    if product in warmed:
         return
     for url in ("https://opil.ouplaw.com/", PRODUCTS[product]["home"]):
         try:
             http.get(url, headers=_headers())
         except RetrievalError:
             continue
-    http._opil_warmed = True  # type: ignore[attr-defined]
+    warmed.add(product)
+    http._opil_warmed = warmed  # type: ignore[attr-defined]
 
 
 def add_search_args(parser: argparse.ArgumentParser) -> None:
@@ -127,7 +129,7 @@ def search(query: str, args: argparse.Namespace, http: HTTP) -> dict[str, Any]:
     except RetrievalError:
         if not http.forget_session_cookies():
             raise
-        http._opil_warmed = False  # type: ignore[attr-defined]
+        http._opil_warmed = set()  # type: ignore[attr-defined]
         _warm(http, product)
         soup, meta = http.soup(SEARCH_URL, params, headers=_headers())
 
