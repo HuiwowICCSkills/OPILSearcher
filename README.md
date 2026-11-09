@@ -2,7 +2,7 @@
 
 独立检索 Oxford Public International Law（OPIL）平台的 MPIL、ORIL 和 ORIL-ICL 产品。只访问 `opil.ouplaw.com`，不需要 `gdufs-auth-session`。
 
-仓库：<https://github.com/HuiwowICCSkills/OPILSearcher>（私有仓库，需要组织成员权限或有效令牌）。
+仓库：<https://github.com/HuiwowICCSkills/OPILSearcher>（公开仓库）。
 
 ## 1. 环境
 
