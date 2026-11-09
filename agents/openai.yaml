@@ -1,0 +1,4 @@
+interface:
+  display_name: "OPIL 国际法百科与报告检索"
+  short_description: "检索 OPIL 平台的 MPIL、ORIL 和 ORIL-ICL 产品"
+  default_prompt: "使用 $OPILSearcher 检索 OPIL；说明所选产品、命中总数、Product 字段，并用 fetch 读取条目页后区分 headnote 与完整正文。"
