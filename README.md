@@ -49,3 +49,22 @@ $opil = "$env:USERPROFILE\.codex\skills\OPILSearcher\run.ps1"
 ## 6. 边界
 
 本 skill 只做 OPIL；判例全文、条约原文和其他来源请用对应的 `LegalToolsSearcher`、`ICJSearcher`、`ICRCSearcher`。OPIL 词条和 ORIL 报告是次级材料，引用时标注性质并回溯一手裁判。
+
+## 实测效果（2026-11-09）
+
+以下命令与结果来自本机 `~/.codex/skills/OPILSearcher` 的实网运行；检索日期 2026-11-09（Asia/Shanghai），输出为该次运行实际返回的 JSON 报告。
+
+```powershell
+& .\run.ps1 search 'command responsibility' --product mpil --limit 5
+```
+
+- 状态：`ok`；`product = mpil`；报告 `total = 154`；本次返回 5 条。
+- 代表性结果：
+
+| 题名 | 作者 | 类型 / 日期 | 链接 |
+| --- | --- | --- | --- |
+| Command Responsibility » | Yoram Dinstein† | Encyclopedia entries；—（API 未返回日期字段） | https://opil.ouplaw.com/display/10.1093/law:epil/9780199231690/law-9780199231690-e273?rskey=V6CyXK&result=1&prd=MPIL |
+| Individual Criminal Responsibility » | Andreas Gordon O'Shea | Encyclopedia entries；—（API 未返回日期字段） | https://opil.ouplaw.com/display/10.1093/law:epil/9780199231690/law-9780199231690-e1852?rskey=V6CyXK&result=2&prd=MPIL |
+| Blaškić Case » | Gideon Boas | Encyclopedia entries；—（API 未返回日期字段） | https://opil.ouplaw.com/display/10.1093/law:epil/9780199231690/law-9780199231690-e2076?rskey=V6CyXK&result=3&prd=MPIL |
+
+> 说明：`total = 154` 是限定 MPIL 产品后的检索返回数，`products_observed` 仅含 "Max Planck Encyclopedias of International Law [MPIL]"。本 skill 的 `scope` 写明这些行是检索元数据而非词条正文：题名、作者、`content_type`、主题词与条目首段片段，`content_scope` 为“not the report text”。`access = entry page readable in this session` 只说明当次会话能打开条目页，不代表已抓到全文。MPIL 百科条目是次级材料，引用其观点前应回溯条目所援引的一手裁判与条约。
