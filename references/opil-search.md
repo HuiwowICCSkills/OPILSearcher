@@ -12,6 +12,7 @@
 | 产品 | 参数 | 2026-11-09 `command responsibility` 总数 |
 | --- | --- | --- |
 | MPIL | `prd=MPEIPRO&access=all&level=all` | 154 |
+| MPIL（稳健组合） | `prd=MPEIPRO&pc_4=8d0b332e-2099-487f-b6ce-253d8c6ce8a0&access=all&level=all` | 154 |
 | ORIL | `pc_17=bdcb8d33-0914-4cd9-bd2b-c84ac21665f7` | 1,012 |
 | ORIL-ICL | `pc_32=68306099-6983-4cb7-a931-60f851434432` | 365 |
 
@@ -37,3 +38,15 @@
 - ORIL 是订阅产品，匿名多数报告页只有 headnote（约 1,333–2,266 字符）；MPIL 自 2024 年起 Subscribe-to-Open，多数词条正文可读。
 - 同一主机连续请求过密会触发 HTTP 405 人工验证页；适配器固定 2 秒间隔。
 - 结果页只给出检索元数据，不保证正文可读；`fetch` 后必须读 `text_characters`。
+
+## Publication-date range（2026-11-12 浏览器核对）
+
+OPIL 的 Advanced Search 有一个独立的 publication-date range 表单（`fromDate`/`toDate` 两个年份下拉框，范围 `Pre-1700`–`2026`）。在同一会话中把 `fromDate`/`toDate` 加到搜索 GET 参数即可收窄：
+
+| 查询 | 总数 |
+| --- | ---: |
+| `q=command responsibility&prd=MPEIPRO&access=all&level=all` | 154 |
+| 同上 + `fromDate=2010&toDate=2015` | 59 |
+| 同上 + `fromDate=2016&toDate=2026` | 68 |
+
+日期参数只在产品会话已经 warm 的情况下稳定；冷会话或残留 Cookie 可能让产品分面失效并混入 ORIL/OSAIL 行。适配器会用 `products_observed` 校验，发现混入就报错，不静默返回错结果。

@@ -23,6 +23,9 @@ description: 独立检索 Oxford Public International Law（OPIL）平台，覆�
 # MPIL 百科检索
 & '<skill-dir>/run.ps1' search 'command responsibility' --product mpil --limit 10 --out './opil-mpil.json'
 
+# 按出版年份收窄（站点 Advanced Search 的 publication-date range）
+& '<skill-dir>/run.ps1' search 'command responsibility' --product mpil --year-from 2010 --year-to 2015 --limit 10
+
 # ORIL 全产品
 & '<skill-dir>/run.ps1' search 'state immunity' --product oril --limit 10 --out './opil-oril.json'
 
@@ -44,6 +47,7 @@ description: 独立检索 Oxford Public International Law（OPIL）平台，覆�
 - `fetch` 的 `content_scope` 会说明实际取得的是百科词条正文、报告 headnote，还是完整裁判文本；MPIL 已转为 Subscribe-to-Open，多数词条页可读；ORIL 是订阅产品，匿名多数报告页只有 1,333–2,266 字符的 headnote，少数条目可能返回完整判决文本。务必读 `text_characters`，不要把 headnote 当完整报告。
 - `products_observed` 是本次结果行实际出现的 Product 字段；如果 MPIL 检索出现 OSAIL/ORIL 混入，说明分面没有生效，适配器会报错而不是静默返回。
 - `total` 是平台在产品分面下报告的总命中数，不等于本机已取得全文的数量。
+- `--year-from`/`--year-to` 映射到 OPIL 搜索页的 `fromDate`/`toDate`（四位年份），只限制出版日期；它们不改变产品分面。不要把年份范围当作法律事实发生时间。
 - 单次 403/405 只是该请求被平台或人工验证页拦截，不等于没有资料；不要对同一请求反复重试。`doctor` 会分别探测三个产品。
 - OPIL 的百科词条和 ORIL 报告都是次级材料或评注；输出时应标注其性质，并把其中的判例线索回溯到一手裁判全文。
 

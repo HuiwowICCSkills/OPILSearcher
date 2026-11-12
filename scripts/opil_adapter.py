@@ -28,7 +28,10 @@ UA = (
 PRODUCTS: dict[str, dict[str, Any]] = {
     "mpil": {
         "name": "Max Planck Encyclopedia of Public International Law (MPIL)",
-        "facets": {"prd": "MPEIPRO"},
+        "facets": {
+            "prd": "MPEIPRO",
+            "pc_4": "8d0b332e-2099-487f-b6ce-253d8c6ce8a0",
+        },
         "extra_params": {"access": "all", "level": "all"},
         "expected_product": "Max Planck Encyclopedias of International Law [MPIL]",
         "home": "https://opil.ouplaw.com/home/MPIL",
@@ -93,6 +96,16 @@ def add_search_args(parser: argparse.ArgumentParser) -> None:
     )
     parser.add_argument("--limit", type=int, default=10, help="1..50 (default 10)")
     parser.add_argument("--offset", type=int, default=0, help=">= 0 (default 0)")
+    parser.add_argument(
+        "--year-from",
+        dest="year_from",
+        help="Publication-date lower bound, four-digit year (e.g. 2010)",
+    )
+    parser.add_argument(
+        "--year-to",
+        dest="year_to",
+        help="Publication-date upper bound, four-digit year (e.g. 2020)",
+    )
 
 
 def add_fetch_args(parser: argparse.ArgumentParser) -> None:
@@ -121,6 +134,10 @@ def search(query: str, args: argparse.Namespace, http: HTTP) -> dict[str, Any]:
         "sort": "relevance",
         "page": page,
     }
+    if getattr(args, "year_from", None):
+        params["fromDate"] = str(args.year_from)
+    if getattr(args, "year_to", None):
+        params["toDate"] = str(args.year_to)
     params.update(cfg["facets"])
     params.update(cfg["extra_params"])
 
@@ -196,7 +213,14 @@ def search(query: str, args: argparse.Namespace, http: HTTP) -> dict[str, Any]:
 
     products = sorted({row["product"] for row in rows if row.get("product")})
     expected = cfg["expected_product"]
-    if expected and products and not any(expected.lower() in p.lower() for p in products):
+    mismatched = (
+        [p for p in products if expected.lower() not in p.lower()]
+        if product == "mpil"
+        else []
+    )
+    if expected and products and (
+        mismatched or not any(expected.lower() in p.lower() for p in products)
+    ):
         raise RetrievalError(
             "Product filter not applied: expected "
             + expected
@@ -218,6 +242,10 @@ def search(query: str, args: argparse.Namespace, http: HTTP) -> dict[str, Any]:
         "status": status,
         "query": query,
         "product": product,
+        "date_range": {
+            "from": getattr(args, "year_from", None) or None,
+            "to": getattr(args, "year_to", None) or None,
+        },
         "total": total,
         "results": selected,
         "pagination": {
